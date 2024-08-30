@@ -8,7 +8,7 @@ set VENV_PATH="D:\АСУП\Python\Projects\StreamlitApps\venv\Scripts\activate"
 call %VENV_PATH%
 
 :: Запуск Streamlit приложения
-streamlit run "D:\АСУП\Python\Projects\StreamlitApps\split_excel_sheets.py"
+streamlit run "D:\АСУП\Python\Projects\StreamlitApps\split_excel_sheets.py" --server.port 8501
 
 :: Завершение работы
 deactivate

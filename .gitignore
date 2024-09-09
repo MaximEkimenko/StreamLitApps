@@ -162,3 +162,4 @@ cython_debug/
 .idea/
 tst_in_streamlitapps.py
 /tst_folder
+/install

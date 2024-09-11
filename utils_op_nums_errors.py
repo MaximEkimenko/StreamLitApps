@@ -10,7 +10,7 @@ with open('op_ban_list.txt', 'r', encoding='utf-8') as ban_file:
         BAN_LIST.append(line.strip())
 
 
-def compare_headers_across_sheets(file_path):
+def compare_headers_across_sheets(file_path: str) -> bool:
     """
     Проверяет одинаковость заголовков внутри файла Excel. За эталон взят первый лист.
     Возвращает False если хотя бы в одном листе есть несоответствие.
@@ -53,7 +53,7 @@ def compare_headers_across_sheets(file_path):
     return all(all_sheets_ok)
 
 
-def compare_rows_across_sheets(file_path, exclude_columns=None, threshold=90):
+def compare_rows_across_sheets(file_path: str, exclude_columns: list = None, threshold: int = 80) -> list:
     """
     Сравнивает значения строк с номером п/п во всех листах Excel, исключая заданные колонки.
     Строки сравниваются с учетом нечеткости с порогом схожести threshold.
@@ -131,6 +131,37 @@ def compare_rows_across_sheets(file_path, exclude_columns=None, threshold=90):
     )
     result_wb.save(report_filename)
     return report_lines
+
+
+def validate_file_path(file_path: str) -> bool:
+    """
+    Валидация пути к файлу file_path: файл должен быть xlsx.
+    """
+    try:
+        # Проверка, что файл существует и является .xlsx файлом
+        if file_path.endswith('.xlsx'):
+            pd.ExcelFile(file_path)  # Попытка открыть файл
+            return True
+        else:
+            return False
+    except Exception as e:
+        return False
+
+
+def validate_sheet_names(file_path: str, source_sheet_name: str) -> bool:
+    """
+    Валидация имени листа источника копирования
+    """
+    try:
+        # Открываем файл и получаем список листов
+        xls = pd.ExcelFile(file_path)
+        available_sheets = xls.sheet_names
+        # Проверяем, что лист-источник существует
+        if source_sheet_name not in available_sheets:
+            return False
+        return True
+    except Exception as e:
+        return False
 
 
 if __name__ == '__main__':

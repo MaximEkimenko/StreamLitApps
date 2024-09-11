@@ -1,13 +1,12 @@
 import streamlit as st
 import pandas as pd
 from pathlib import Path
+from streamlit_styles import streamlit_app_style
 
 
-def split_excel_sheets(file_path):
+def split_excel_sheets(file_path: Path) -> list:
     """
-    # Функция для разбиения листов Excel на отдельные файлы
-    :param file_path:
-    :return:
+    Функция для разбиения листов файла file_path Excel на отдельные файлы
     """
     xls = pd.ExcelFile(file_path)
 
@@ -33,59 +32,35 @@ def split_excel_sheets(file_path):
     return created_files
 
 
-# Streamlit
-st.set_page_config(page_icon=None, layout='wide', initial_sidebar_state='auto')
-st.title("Создание файлов excel из листов всех файлов xlsx в директории.")
-
-st.markdown(
+def main():
     """
-    <style>
-    .styled-text-input {
-        border: 2px solid #4CAF50;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-        width: 100%;
-    }
-    /* Скрываем меню Streamlit */
-    #MainMenu {visibility: hidden;}
-    /* Скрываем иконку Streamlit в браузере */
-    header {visibility: hidden;}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-st.markdown("### Укажите директорию для чтения всех Excel файлов:")
-directory = st.text_input("", key="directory_input", placeholder="Введите путь к директории")
-
-st.markdown(
+    Интерфейс streamlit для использования функции split_excel_sheets
+    :return:
     """
-    <style>
-    div.stTextInput > div > input {
-        border: 2px solid #4CAF50;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-if st.button("Обработать все файлы в директории"):
-    if directory:
-        directory_path = Path(directory)
-        if directory_path.is_dir():
-            all_files = list(directory_path.glob('*.xlsx'))
-            if not all_files:
-                st.write("В указанной директории нет файлов Excel.")
+    # стилизация
+    st.markdown(streamlit_app_style, unsafe_allow_html=True)
+    # основное приложение
+    st.title("Создание файлов excel из листов всех файлов xlsx в директории.")
+    st.markdown("### Укажите директорию для чтения всех Excel файлов:")
+    directory = st.text_input("", key="directory_input", placeholder="Введите путь к директории")
+    if st.button("Обработать все файлы в директории"):
+        if directory:
+            directory_path = Path(directory)
+            if directory_path.is_dir():
+                all_files = list(directory_path.glob('*.xlsx'))
+                if not all_files:
+                    st.error("В указанной директории нет файлов Excel.")
+                else:
+                    for file_path in all_files:
+                        created_files = split_excel_sheets(file_path)
+                        st.success(f"Из файла `{file_path.name}` созданы файлы в папке `{file_path.stem}`:")
+                        for file in created_files:
+                            st.success(f"- {file.resolve()}")
             else:
-                for file_path in all_files:
-                    created_files = split_excel_sheets(file_path)
-                    st.write(f"Из файла `{file_path.name}` созданы файлы в папке `{file_path.stem}`:")
-                    for file in created_files:
-                        st.write(f"- {file.resolve()}")
+                st.error("Указанная директория не существует.")
         else:
-            st.write("Указанная директория не существует.")
-    else:
-        st.write("Вы не выбрали директорию.")
+            st.error("Вы не выбрали директорию.")
+
+
+if __name__ == "__main__":
+    main()

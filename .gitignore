@@ -163,3 +163,4 @@ cython_debug/
 tst_in_streamlitapps.py
 /tst_folder
 /install
+/install_operations

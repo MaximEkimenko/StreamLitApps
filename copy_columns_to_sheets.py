@@ -20,10 +20,23 @@ def copy_columns_to_sheets(file_path: str, source_sheet_name: str, exclude_sheet
     for row in source_sheet.iter_rows(min_row=4, values_only=True):
         p_num = row[0]
         # TODO подставить новые координаты значений для копирования
-        tech_queue = row[2]
-        next_sz = row[3]
+        next_sz = row[1]  # ссылка на след СЗ
+        tech_queue = row[2]  # очерёдность
+        rc_number = row[5]  # номер рабочего центра
+        rc_analog_1 = row[6]  # аналог рабочего центра №1
+        rc_analog_2 = row[7]  # аналог рабочего центра №2
+        rc_analog_3 = row[8]  # аналог рабочего центра №3
+        terminal_number = row[9]  # номер терминала
+
         if p_num is not None:
-            source_data[p_num] = (tech_queue, next_sz)
+            source_data[p_num] = (tech_queue,
+                                  next_sz,
+                                  rc_number,
+                                  rc_analog_1,
+                                  rc_analog_2,
+                                  rc_analog_3,
+                                  terminal_number,
+                                  )
 
     # Проход по каждому листу
     for sheet_name in book.sheetnames:
@@ -34,19 +47,40 @@ def copy_columns_to_sheets(file_path: str, source_sheet_name: str, exclude_sheet
             for row_idx, row in enumerate(sheet.iter_rows(min_row=4, max_col=1, values_only=True), start=4):
                 p_num = row[0]
                 if p_num in source_data:
-                    tech_queue, next_sz = source_data[p_num]
+                    (tech_queue,
+                     next_sz,
+                     rc_number,
+                     rc_analog_1,
+                     rc_analog_2,
+                     rc_analog_3,
+                     terminal_number,
+                     ) = source_data[p_num]
                     # Пропускаем объединенные ячейки
                     for cell in sheet[row_idx]:
                         if cell.coordinate in sheet.merged_cells:
                             continue
                         # TODO подставить реальные номера колонок
+                        elif cell.column == 2:  # Следующее СЗ
+                            cell.value = next_sz
                         if cell.column == 3:  # Очерёдность
                             cell.value = tech_queue
-                        elif cell.column == 4:  # Следующее СЗ
-                            cell.value = next_sz
+                        elif cell.column == 6:  # Номер РЦ
+                            cell.value = rc_number
+                        elif cell.column == 7:  # аналог РЦ 1
+                            cell.value = rc_analog_1
+                        elif cell.column == 8:  # аналог РЦ 2
+                            cell.value = rc_analog_2
+                        elif cell.column == 9:  # аналог РЦ 3
+                            cell.value = rc_analog_3
+                        elif cell.column == 10:  # аналог РЦ 3
+                            cell.value = terminal_number
                     if tech_queue:
+                        # строка успехов для вывода в streamlit
                         success_copy_str = (f"Скопировано в {sheet_name}: {p_num} - Очередность = {tech_queue},"
-                                            f" Следующее СЗ = {next_sz}")  # строка успехов для вывода в streamlit
+                                            f" Следующее СЗ = {next_sz}"
+                                            f" Рабочие центры со своими аналогами  = "
+                                            f"{rc_number, rc_analog_1, rc_analog_2, rc_analog_3}."
+                                            f" Номер терминала = {terminal_number}.")
                         result_str.append(success_copy_str)
     book.save(file_path)
     book.close()

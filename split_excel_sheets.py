@@ -5,9 +5,7 @@ from streamlit_styles import streamlit_app_style
 
 
 def split_excel_sheets(file_path: Path) -> list:
-    """
-    Функция для разбиения листов файла file_path Excel на отдельные файлы
-    """
+    """Функция для разбиения листов файла file_path Excel на отдельные файлы."""
     xls = pd.ExcelFile(file_path)
 
     output_directory = file_path.parent / f'Листы {file_path.stem}'
@@ -33,10 +31,7 @@ def split_excel_sheets(file_path: Path) -> list:
 
 
 def main():
-    """
-    Интерфейс streamlit для использования функции split_excel_sheets
-    :return:
-    """
+    """Интерфейс streamlit для использования функции split_excel_sheets."""
     # стилизация
     st.markdown(streamlit_app_style, unsafe_allow_html=True)
     # основное приложение

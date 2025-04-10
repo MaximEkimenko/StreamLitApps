@@ -11,10 +11,9 @@ with open('op_ban_list.txt', 'r', encoding='utf-8') as ban_file:
 
 
 def compare_headers_across_sheets(file_path: str) -> bool:
-    """
-    Проверяет одинаковость заголовков внутри файла Excel. За эталон взят первый лист.
-    Возвращает False если хотя бы в одном листе есть несоответствие.
-    """
+    """Проверяет одинаковость заголовков внутри файла Excel. За эталон взят первый лист.
+
+    Возвращает False если хотя бы в одном листе есть несоответствие."""
     xlsx = pd.ExcelFile(file_path)
     reference_headers = None
     all_sheets_ok = []  # bool список безошибочных листов
@@ -54,10 +53,9 @@ def compare_headers_across_sheets(file_path: str) -> bool:
 
 
 def compare_rows_across_sheets(file_path: str, exclude_columns: list = None, threshold: int = 80) -> list:
-    """
-    Сравнивает значения строк с номером п/п во всех листах Excel, исключая заданные колонки.
-    Строки сравниваются с учетом нечеткости с порогом схожести threshold.
-    """
+    """Сравнивает значения строк с номером п/п во всех листах Excel, исключая заданные колонки.
+
+    Строки сравниваются с учетом нечеткости с порогом схожести threshold."""
     if exclude_columns is None:
         exclude_columns = []
     # Загрузить Excel-файл
@@ -134,9 +132,7 @@ def compare_rows_across_sheets(file_path: str, exclude_columns: list = None, thr
 
 
 def validate_file_path(file_path: str) -> bool:
-    """
-    Валидация пути к файлу file_path: файл должен быть xlsx.
-    """
+    """Валидация пути к файлу file_path: файл должен быть xlsx."""
     try:
         # Проверка, что файл существует и является .xlsx файлом
         if file_path.endswith('.xlsx'):
@@ -149,9 +145,7 @@ def validate_file_path(file_path: str) -> bool:
 
 
 def validate_sheet_names(file_path: str, source_sheet_name: str) -> bool:
-    """
-    Валидация имени листа источника копирования
-    """
+    """Валидация имени листа источника копирования."""
     try:
         # Открываем файл и получаем список листов
         xls = pd.ExcelFile(file_path)
@@ -160,28 +154,9 @@ def validate_sheet_names(file_path: str, source_sheet_name: str) -> bool:
         if source_sheet_name not in available_sheets:
             return False
         return True
-    except Exception as e:
+    except Exception:
         return False
 
 
 if __name__ == '__main__':
     pass
-    # tst_file_path = r'D:\АСУП\Python\Projects\OmzitTerminal\misc\Трудоемкость серия М (в работе).xlsx'
-    # tst_exclude_columns = ('ГОСТ и тип сварочного шва',
-    #                        'Стоимость часа, руб',
-    #                        'Трудоёмкость на 1 котел, чел/час',
-    #                        '№ рабочего центра',
-    #                        'Загрузка оборудования на 1 котел, часов',
-    #                        'Кол-во ед./заготовок на 1 котел',
-    #                        'Ссылка на чертежи',
-    #                        'Расценка за объем работ, руб.',
-    #                        'Рабочий центр',
-    #                        'Объём работ (максимальный в смену)',
-    #                        'Трудоёмкость на 1 ед./заготовку, чел/час',
-    #                        'ед.изм.',
-    #                        'Численность, чел.',
-    #                        'Трудоёмкость в смену, час'
-    #                        )
-    # tst_threshold = 80
-    # if compare_headers_across_sheets(tst_file_path):
-    #     compare_rows_across_sheets(tst_file_path, tst_exclude_columns, threshold=tst_threshold)
